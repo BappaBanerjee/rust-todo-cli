@@ -1,44 +1,42 @@
 //todo cli app
 use todo_cli::Task;
+use std::io::{self, Write};
 
-use todo_cli::{create, delete_task, mark_complete, print_commands, view_todolist};
+use todo_cli::{create, delete_task, mark_complete, view_todolist };
 fn main() {
     let mut todo_lists: Vec<Task> = Vec::new();
 
     loop {
-        print_commands();
+         io::stdout().flush().unwrap();
 
-        let mut choice = String::new();
+        let mut input  = String::new();
         std::io::stdin()
-            .read_line(&mut choice)
+            .read_line(&mut input)
             .expect("Failed to read line");
         
-        let choice: u32 = match choice.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                println!("Invalid input, please enter a number.");
-                continue;
-            }
-        };
+        let input = input.trim();
+        let mut parts = input.split_whitespace();
+        let command = parts.next(); 
+        let args: Vec<&str> = parts.collect();
 
-        match choice {
-            1 => {
+        match command {
+            Some("create") => {
                 println!("Creating a new todo list...");
                 create(&mut todo_lists);
             }
-            2 => {
+            Some("view") => {
                 println!("Viewing todo lists...");
                 view_todolist(&mut todo_lists);
             }
-            3 => {
+            Some("complete") => {
                 // marking as complete
                 mark_complete(&mut todo_lists);
             }
-            4 => {
+            Some("delete") => {
                 //deleting an item
                 delete_task(&mut todo_lists);
             }
-            5 => {
+            Some("exit") => {
                 println!("Exiting the app.");
                 break;
             }

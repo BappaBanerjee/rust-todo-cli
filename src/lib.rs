@@ -1,3 +1,5 @@
+pub mod command;
+
 #[derive(Debug)]
 pub struct Task {
     // id : u32,
