@@ -1,16 +1,21 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, Args};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
-pub struct Cli {
+pub struct Commands {
     #[command(subcommand)]
-    pub command: Commands,
+    pub command: SubCommands,
 }
 
 #[derive(Debug, Subcommand)]
-pub enum Commands {
-    Create {
-        /// The name of the task
-        name: String,
-    },
+pub enum SubCommands {
+    Create(CreateArgs),
+    List
 }
+
+#[derive(Debug, Args)]
+pub struct CreateArgs{
+    pub name : String,
+    // completed : bool
+}
+

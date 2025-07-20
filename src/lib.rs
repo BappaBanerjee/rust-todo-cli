@@ -16,23 +16,23 @@ pub fn print_commands() {
     println!("5. Exit");
 }
 
-pub fn create(todo_lists: &mut Vec<Task>) {
-    let mut todo_name = String::new();
-    println!("Enter the name of the task");
-    std::io::stdin()
-        .read_line(&mut todo_name)
-        .expect("Failed to read line");
-    let todo_name = todo_name.trim();
-    if todo_name.is_empty() {
+pub fn create(todo_lists: &mut Vec<Task>, name : &str) {
+    // let mut todo_name = String::new();
+    // println!("Enter the name of the task");
+    // std::io::stdin()
+    //     .read_line(&mut todo_name)
+    //     .expect("Failed to read line");
+    // let todo_name = todo_name.trim();
+    if name.is_empty() {
         println!("Task name cannot be empty.");
         return;
     }
     let new_task = Task {
-        name: todo_name.to_string(),
+        name: name.to_string(),
         completed: false,
     };
     todo_lists.push(new_task);
-    println!("Todo list '{}' created successfully!", todo_name);
+    println!("Todo list '{}' created successfully!", name);
 }
 
 pub fn view_todolist(todo_lists: &mut Vec<Task>) {

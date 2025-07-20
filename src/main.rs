@@ -1,6 +1,10 @@
+use clap::Parser;
 //todo cli app
 use todo_cli::Task;
 use std::io::{self, Write};
+
+use todo_cli::command::{Commands, CreateArgs, SubCommands};
+
 
 use todo_cli::{create, delete_task, mark_complete, view_todolist };
 fn main() {
@@ -15,34 +19,39 @@ fn main() {
             .expect("Failed to read line");
         
         let input = input.trim();
+
+
         let mut parts = input.split_whitespace();
         let command = parts.next(); 
         let args: Vec<&str> = parts.collect();
 
-        match command {
-            Some("create") => {
-                println!("Creating a new todo list...");
-                create(&mut todo_lists);
+        println!("input: {:?}", input);
+
+        let args = input.split_whitespace().collect::<Vec<&str>>();
+
+        println!("args: {:?}", args);
+
+        let mut full_args = vec!["todo-cli"]; // Assuming the binary name is `todo-cli`
+
+        full_args.extend(args);
+
+        println!("full_args: {:?}", full_args);
+
+
+
+        match Commands::try_parse_from(full_args) {
+            Ok(cli_command) => {
+                match cli_command.command {
+                    SubCommands::Create(args) => {
+                        println!("sub command create is called : {args:?}");
+                        create(&mut todo_lists, &args.name);
+                    },
+                    SubCommands::List => {
+                        view_todolist(&mut todo_lists);
+                    }
+                }
             }
-            Some("view") => {
-                println!("Viewing todo lists...");
-                view_todolist(&mut todo_lists);
-            }
-            Some("complete") => {
-                // marking as complete
-                mark_complete(&mut todo_lists);
-            }
-            Some("delete") => {
-                //deleting an item
-                delete_task(&mut todo_lists);
-            }
-            Some("exit") => {
-                println!("Exiting the app.");
-                break;
-            }
-            _ => {
-                println!("Invalid choice, please try again.");
-            }
+            Err(e) =>  e.print().expect("Error printing clap error")
         }
     }
 }
