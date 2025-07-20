@@ -2,32 +2,19 @@ pub mod command;
 
 #[derive(Debug)]
 pub struct Task {
-    // id : u32,
+    id: u32,
     pub name: String,
     pub completed: bool,
 }
 
-pub fn print_commands() {
-    println!("Welcome to the Todo CLI App!");
-    println!("1. Create a new todo list");
-    println!("2. View todo lists");
-    println!("3. Marking as Complete");
-    println!("4. Delete a task");
-    println!("5. Exit");
-}
-
-pub fn create(todo_lists: &mut Vec<Task>, name : &str) {
-    // let mut todo_name = String::new();
-    // println!("Enter the name of the task");
-    // std::io::stdin()
-    //     .read_line(&mut todo_name)
-    //     .expect("Failed to read line");
-    // let todo_name = todo_name.trim();
+pub fn create(todo_lists: &mut Vec<Task>, name: &str) {
     if name.is_empty() {
         println!("Task name cannot be empty.");
         return;
     }
+    let id = todo_lists.iter().map(|task| task.id).max().unwrap_or(0) + 1;
     let new_task = Task {
+        id,
         name: name.to_string(),
         completed: false,
     };
@@ -36,16 +23,19 @@ pub fn create(todo_lists: &mut Vec<Task>, name : &str) {
 }
 
 pub fn view_todolist(todo_lists: &mut Vec<Task>) {
-    println!("**********My Todos*********");
-    println!("===========================");
+    println!("*************My Todos***************");
+    println!("====================================");
 
     if todo_lists.is_empty() {
         println!("No todo lists available.");
     } else {
+        println!("Index |   ID  |   Name    |   Status");
+        println!("====================================");
         for (index, task) in todo_lists.iter().enumerate() {
             println!(
-                "{} | {} | {}",
+                "{}    |   {}  |   {}  |   {}",
                 index + 1,
+                task.id,
                 task.name,
                 if task.completed {
                     "Completed"
@@ -55,21 +45,10 @@ pub fn view_todolist(todo_lists: &mut Vec<Task>) {
             );
         }
     }
-    println!("===========================");
+    println!("====================================");
 }
 
-pub fn mark_complete(todo_lists: &mut Vec<Task>) {
-    let mut index = String::new();
-    println!("Enter the task Id");
-    std::io::stdin()
-        .read_line(&mut index)
-        .expect("cannot read input");
-    println!("{index}");
-    let index: usize = index.trim().parse().expect("invalid number");
-    if todo_lists.len() < index {
-        println!("smallest")
-    }
-
+pub fn mark_complete(todo_lists: &mut Vec<Task>, index: &usize) {
     let task = todo_lists.get_mut(index - 1);
     match task {
         Some(task) => {
@@ -77,13 +56,31 @@ pub fn mark_complete(todo_lists: &mut Vec<Task>) {
         }
         None => println!("No task found"),
     }
+    println!("Task marked as completed successfully!");
+    view_todolist(todo_lists);
 }
 
-pub fn delete_task(todo_lists: &mut Vec<Task>) {
-    let mut index = String::new();
-    std::io::stdin()
-        .read_line(&mut index)
-        .expect("unable to read");
-    let index: usize = index.trim().parse().expect("invalid number");
+pub fn delete_task(todo_lists: &mut Vec<Task>, index: &usize) {
+    if index > &todo_lists.len() {
+        println!("Invalid task index.");
+        return;
+    }
+    if todo_lists.is_empty() {
+        println!(
+            "No tasks available to delete."
+        );
+        return;
+    }
     todo_lists.remove(index - 1);
+    println!("Task deleted successfully!");
+    view_todolist(todo_lists);
+}
+
+pub fn help() {
+    println!("Available commands:");
+    println!("1. create <name> - Create a new todo list with the given name.");
+    println!("2. list - List all todo lists.");
+    println!("3. complete <id> - Mark the todo list with the given ID as completed.");
+    println!("4. delete <id> - Delete the todo list with the given ID.");
+    println!("5. exit - Exit the application.");
 }
