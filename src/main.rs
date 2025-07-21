@@ -1,12 +1,9 @@
 use clap::Parser;
-//todo cli app
 use std::io::{self, Write};
-use std::ops::Sub;
-use todo_cli::Task;
+use todo_cli::{edit_task, log_error, Task};
+use todo_cli::command::{Commands, SubCommands};
+use todo_cli::{create, delete_task, mark_complete, view_todolist};
 
-use todo_cli::command::{Commands, CreateArgs, SubCommands};
-
-use todo_cli::{create, delete_task, mark_complete, view_todolist, help};
 fn main() {
     let mut todo_lists: Vec<Task> = Vec::new();
 
@@ -21,17 +18,19 @@ fn main() {
         let input = input.trim();
         let args = input.split_whitespace().collect::<Vec<&str>>();
 
-        let mut full_args = vec!["todo-cli"]; // Assuming the binary name is `todo-cli`
+        let mut full_args = vec!["todo-cli"]; // adding the binary name `todo-cli`
         full_args.extend(args);
 
         match Commands::try_parse_from(full_args) {
             Ok(cli_command) => match cli_command.command {
                 SubCommands::Create(args) => {
-                    // println!("sub command create is called : {args:?}");
                     create(&mut todo_lists, &args.name);
                 }
                 SubCommands::List => {
                     view_todolist(&mut todo_lists);
+                },
+                SubCommands::Edit(args) => {
+                    edit_task(&mut todo_lists, args);
                 }
                 SubCommands::Complete(args) => {
                     mark_complete(&mut todo_lists, &args.id);
@@ -44,7 +43,7 @@ fn main() {
                     return;
                 },
             },
-            Err(e) => e.print().expect("Error printing clap error"),
+            Err(e) => log_error(format_args!("Error parsing command: {}", e)),
         }
     }
 }

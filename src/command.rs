@@ -12,6 +12,7 @@ pub enum SubCommands {
     Create(CreateArgs),
     List,
     Complete(CompleteArgs),
+    Edit(EditArgs),
     Delete(DeleteArgs),
     Exit,
     // Help
@@ -22,6 +23,17 @@ pub struct CreateArgs {
     pub name: String,
     // completed : bool
 }
+
+
+#[derive(Debug, Args)]
+pub struct EditArgs {
+    pub id : usize,
+    #[arg(short, long)]
+    pub name: Option<String>,
+    #[arg(short, long)]
+    pub completed : Option<bool>
+}
+
 
 #[derive(Debug, Args)]
 pub struct CompleteArgs {
