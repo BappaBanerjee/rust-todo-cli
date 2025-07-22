@@ -3,12 +3,13 @@ use std::io::{self, Write};
 use todo_cli::command::{Commands, SubCommands};
 use todo_cli::{
     Task, create, delete_task, edit_task,
-    logger::{log_error, log_info},
+    logger::{log_error, log_info, log_notice},
     mark_complete, view_todolist,
 };
 
 fn main() {
     let mut todo_lists: Vec<Task> = Vec::new();
+    log_notice(format_args!("Welcome to the Todo CLI!"));
 
     loop {
         io::stdout().flush().unwrap();
