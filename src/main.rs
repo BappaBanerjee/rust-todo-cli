@@ -1,8 +1,11 @@
 use clap::Parser;
 use std::io::{self, Write};
-use todo_cli::{edit_task, log_error, Task};
 use todo_cli::command::{Commands, SubCommands};
-use todo_cli::{create, delete_task, mark_complete, view_todolist};
+use todo_cli::{
+    Task, create, delete_task, edit_task,
+    logger::{log_error, log_info},
+    mark_complete, view_todolist,
+};
 
 fn main() {
     let mut todo_lists: Vec<Task> = Vec::new();
@@ -28,7 +31,7 @@ fn main() {
                 }
                 SubCommands::List => {
                     view_todolist(&mut todo_lists);
-                },
+                }
                 SubCommands::Edit(args) => {
                     edit_task(&mut todo_lists, args);
                 }
@@ -39,9 +42,9 @@ fn main() {
                     delete_task(&mut todo_lists, &args.id);
                 }
                 SubCommands::Exit => {
-                    println!("Exiting the application.");
+                    log_info(format_args!("Exiting the application."));
                     return;
-                },
+                }
             },
             Err(e) => log_error(format_args!("Error parsing command: {}", e)),
         }

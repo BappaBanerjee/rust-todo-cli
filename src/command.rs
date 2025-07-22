@@ -1,5 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
+use crate::Status;
+
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct Commands {
@@ -15,25 +17,21 @@ pub enum SubCommands {
     Edit(EditArgs),
     Delete(DeleteArgs),
     Exit,
-    // Help
 }
 
 #[derive(Debug, Args)]
 pub struct CreateArgs {
     pub name: String,
-    // completed : bool
 }
-
 
 #[derive(Debug, Args)]
 pub struct EditArgs {
-    pub id : usize,
+    pub id: usize,
     #[arg(short, long)]
     pub name: Option<String>,
     #[arg(short, long)]
-    pub completed : Option<bool>
+    pub status: Option<Status>,
 }
-
 
 #[derive(Debug, Args)]
 pub struct CompleteArgs {
